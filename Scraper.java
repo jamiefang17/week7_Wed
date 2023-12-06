@@ -1,20 +1,21 @@
 package week7_Wed;
 
-
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class Scraper extends JFrame {
     //add instance viable
     JTextField urlTextField;
     JTable jtable;
     JTextField regexTextField;
+    JButton btn;
 
     public Scraper(){
         super("Scrape the application");
@@ -32,15 +33,24 @@ public class Scraper extends JFrame {
         add(scrollPane);
        
         JPanel southJPanel =new JPanel();
+        btn =new JButton("Click here");
+        btn.addActionListener(this::SearchPage);
+        //btn.addActionLister(e -> SearchPange(e));
+        southJPanel.add(btn);
         
-        regexTextField = new JTextField();
+        regexTextField = new JTextField(20);
+        southJPanel.add(regexTextField);
 
         add(southJPanel, BorderLayout.SOUTH);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setSize(800,900);
+        setLocation(500,300);
+        setSize(800,300);
         setVisible(true);
+    }
+    //add btn click
+    public void SearchPage(ActionEvent e){
+        //every time click the bt, we'll
     }
     
 }
