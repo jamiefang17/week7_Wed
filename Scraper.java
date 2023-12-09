@@ -1,5 +1,3 @@
-package week7_Wed;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -16,111 +14,81 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Scraper extends JFrame {
-    //add instance viable
-    JTextField urlTextField;
-    DefaultTableModel tableModel;
-    JTable jtable;
-    JComboBox<String> regexComboBox;
-    //JTextField regexTextField;
-    JButton btn;
 
-    public Scraper(){
-        super("Scrape the application");
-        
-        setLayout(new BorderLayout());
+JTextField textFieldUrl;
+//JTextField textFieldRegex;
+JTable jtable;
+JButton btn;
+DefaultTableModel tableModel;
+JComboBox box = new JComboBox<>();
+public Scraper() {
+super("scrape the internet");
 
-        urlTextField = new JTextField("Enter URL");
-        add(urlTextField, BorderLayout.NORTH);
-        //design the table with default looking
-        tableModel= new DefaultTableModel();
-        jtable = new JTable(tableModel);
+setLayout(new BorderLayout());
 
-        tableModel.addColumn("Line#"); 
-        tableModel.addColumn("Result");
-        
+textFieldUrl = new JTextField(20);
 
-        //String columns[] ={"ID","NAME","SALARY"};
-        //String data[][]={{"1","Jamie","30000"},{"2","Peter","4500"},{"3","Esther","2500"}};
+add(textFieldUrl, BorderLayout.NORTH);
 
-        //jtable = new JTable(data, columns);
-        JScrollPane scrollPane = new JScrollPane(jtable);
-        add(scrollPane);
-       
-        JPanel southJPanel =new JPanel();
+tableModel = new DefaultTableModel();
+jtable = new JTable(tableModel);
 
-        regexComboBox =new JComboBox<String>();
-        regexComboBox.addItem("\\d{3}\\-\\d{3}\\-\\d{4}");
-        regexComboBox.addItem("0-9");
-        regexComboBox.addItem("[A-Za-z0-9\\.]+\\@[A-Za-z0-9]+\\.[A-Za-z0-9]+");
+tableModel.addColumn("Line #");
+tableModel.addColumn("Result");
 
-        btn =new JButton("Click here");
-        btn.addActionListener(this::SearchPage);
-        //btn.addActionLister(e -> SearchPange(e));
-        southJPanel.add(btn);
-        
-        //regexComboBox = new JTextField(20);
-        southJPanel.add(regexComboBox);
+JScrollPane pane = new JScrollPane(jtable);
 
-        add(southJPanel, BorderLayout.SOUTH);
+add(pane);
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocation(500,300);
-        setSize(800,300);
-        setVisible(true);
-    }
+JPanel panel = new JPanel();
 
-    //add reset
+//textFieldRegex = new JTextField(20);
+box.addItem("[0-9]+");
+box.addItem("\\d{3}\\-\\d{3}\\-\\d{4}");
+box.addItem("[0-9a-zA-Z\\.]+\\@[0-9a-zA-Z\\\\.]+\\.[0-9a-zA-Z\\\\.]+");
+panel.add(box);
 
-public void Reset(ActionEvent e)
-{
-    tableModel.setRowCount(0);
-    match.clear();
+btn = new JButton("Click me!");
+btn.addActionListener(e -> HandleButtonClick(e));
+panel.add(btn);
+
+add(panel, BorderLayout.SOUTH);
+
+setSize(500, 599);
+setLocationRelativeTo(null);
+setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+setVisible(true);
 }
 
-//add btn click
-    public void SearchPage(ActionEvent e){
-        tableModel.setRowCount(0);
-        //every time click the bt, we'll
-        //get url
-        try{
-        URL url = new URL(urlTextField.getText());
-        URLConnection urlConnection =url.openConnection();
-       InputStream inputStream = urlConnection.getInputStream();
-       InputStreamReader streamReader = new InputStreamReader(inputStream);
+private void HandleButtonClick(ActionEvent e) {
+URL givenUrl = null;
+tableModel.setRowCount(0);
 
-       BufferedReader bufferedReader = new BufferedReader(streamReader);
-       String line = null;
-       HashSet<String> matches =new HashSet<String>();
+try {
+givenUrl = new URL(textFieldUrl.getText());
 
+URLConnection connection = givenUrl.openConnection();
+InputStream is = connection.getInputStream();
 
-        while ((line = bufferedReader.readLine())!=null){
-            //REGEX pattern matching
-            Pattern pattern = Pattern.compile(regexComboBox.getSelectedItem().toString());
-            Matcher match = pattern.matcher(line);
-            //add to our table
-            if(match.find()){
-                if(matches.contains((match.group())))
-                {}//do noth
-                else{
-                    var grouping =match.group();
-                    //.....
-                               matches.add(match.group());
-                tableModel.addRow(new Object[]{String.valueOf(tableModel.getColumnCount() +1), match.group()});
-            }
-        }
+BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-            
-        }       
+String line = null;
 
-        } catch(Exception exception){
+while ((line = br.readLine()) != null) {
+Pattern pattern = Pattern.compile(box.getSelectedItem().toString());
+Matcher match = pattern.matcher(line);
 
-        }
+while (match.find()) {
+tableModel.insertRow(tableModel.getRowCount(), new Object[]{String.valueOf(tableModel.getRowCount() + 1), match.group()});
+}
+}
 
-    }
-    
+} catch (Exception exception) {
+}
+
+}
 }
